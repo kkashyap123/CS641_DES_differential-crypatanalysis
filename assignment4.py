@@ -20,6 +20,14 @@ def output(outp):
 		lst.append(hex(ord(outp[i])-ord('f'))[2])
 	return ''.join(lst)
 
+def swap(str):
+	str=padbin(str)
+	str=str[2:]
+	str_l=str[0:32]
+	str_r=str[32:]
+	return '0b'+str_r+str_l
+
+
 def inv_ip(s):
 	s=padbin(s)
 	s=s[2:]
@@ -31,6 +39,18 @@ def inv_ip(s):
 	s='0b'+''.join(lst)
 	return int(s,0)
 
+def ip(s):
+	s=padbin(s)
+	s=s[2:]
+	lst=[]
+	perm=[40,8,48,16,56,24,64,32,39,7,47,15,55,23,63,31,38,6,46,14,54,22,62,30,37,5,45,13,53,21,61,29,36,4,44,12,52,20,60,28,35,3,43,11,51,19,59,27,34,2,42,10,50,18,58,26,33,1,41,9,49,17,57,25]
+	for i in range(1,65):
+		ind=perm.index(i)
+		lst.append(s[ind])
+	s='0b'+''.join(lst)
+	return int(s,0)
+
+
 import random, subprocess, string
 inlst1=[]
 inlst2=[]
@@ -39,6 +59,7 @@ outlst2=[]
 
 char_xor= int('0x4008000004000000',0)
 in_xor=inv_ip(bin(char_xor))
+
 
 
 for i in range(1):
@@ -57,9 +78,13 @@ for i in range(1):
 	out1=subprocess.check_output(args1,shell=True)
 	out1=out1.decode('utf-8').split('"')[3]
 	print(out1)
-	outlst1.append(int(output(out1),0))
+	str=swap(bin(ip(bin(int(output(out1),0)))))
+	outlst1.append(int(str,0))
 
 	out2=subprocess.check_output(args2,shell=True)
 	out2=out2.decode('utf-8').split('"')[3]
 	print(out2)
-	outlst2.append(int(output(out2),0))
+	str=swap(bin(ip(bin(int(output(out2),0)))))
+	outlst2.append(int(str,0))
+
+	print(outlst1,outlst2)
