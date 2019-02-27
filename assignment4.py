@@ -22,9 +22,7 @@ def output(outp):
 
 def inv_ip(s):
 	s=padbin(s)
-	print(s)
 	s=s[2:]
-
 	lst=[]
 	perm=[58,50,42,34,26,18,10,2,60,52,44,36,28,20,12,4,62,54,46,38,30,22,14,6,64,56,48,40,32,24,16,8,57,49,41,33,25,17,9,1,59,51,43,35,27,19,11,3,61,53,45,37,29,21,13,5,63,55,47,39,31,23,15,7]
 	for i in range(1,65):
@@ -39,8 +37,8 @@ inlst2=[]
 outlst1=[]
 outlst2=[]
 
-init_xor= int('0x0080820060000000',0)
-char_xor=inv_ip(bin(init_xor))
+char_xor= int('0x04000000405c0000',0)
+in_xor=inv_ip(bin(char_xor))
 
 for i in range(1):
 	in1=''.join(random.choice(string.ascii_lowercase) for i in range(8))
@@ -64,5 +62,4 @@ for i in range(1):
 	out2=out2.decode('utf-8').split('"')[3]
 	print(out2)
 	outlst2.append(int(output(out2),0))
-
 
