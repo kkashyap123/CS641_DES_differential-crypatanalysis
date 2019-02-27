@@ -5,6 +5,9 @@ def padhexa(s):
 def padbin(s):
 	return '0b'+s[2:].zfill(64)
 
+def padbin32(s):
+	return '0b'+s[2:].zfill(32)
+
 def hex2str(str):
 	padhexa(str)
 	lst=[]
@@ -50,6 +53,24 @@ def ip(s):
 	s='0b'+''.join(lst)
 	return int(s,0)
 
+def inv_s_permut(s):
+	s=padbin32(s)
+	s=s[2:]
+	lst=[]
+	perm =[16, 7, 20, 21, 29, 12, 28, 17,1, 15, 23, 26, 5, 18, 31, 10,2, 8, 24, 14, 32, 27, 3, 9,19, 13, 30, 6, 22, 11, 4, 25]
+	for i in range(1,33):
+		ind=perm.index(i)
+		lst.append(s[ind])
+	s='0b'+''.join(lst)
+	return int(s,0)
+
+def expand(block):
+	block=block[2:]
+	table=[32, 1, 2, 3, 4, 5,4, 5, 6, 7, 8, 9,8, 9, 10, 11, 12, 13,12, 13, 14, 15, 16, 17,16, 17, 18, 19, 20, 21,20, 21, 22, 23, 24, 25,24, 25, 26, 27, 28, 29,28, 29, 30, 31, 32, 1]
+	lst=[block[x-1] for x in table]
+	return '0b'+''.join(lst)
+
+
 
 import random, subprocess, string
 inlst1=[]
@@ -59,7 +80,6 @@ outlst2=[]
 
 char_xor= int('0x4008000004000000',0)
 in_xor=inv_ip(bin(char_xor))
-
 
 
 for i in range(1):
@@ -78,13 +98,34 @@ for i in range(1):
 	out1=subprocess.check_output(args1,shell=True)
 	out1=out1.decode('utf-8').split('"')[3]
 	print(out1)
-	str=swap(bin(ip(bin(int(output(out1),0)))))
-	outlst1.append(int(str,0))
+	out1=swap(bin(ip(bin(int(output(out1),0)))))
 
 	out2=subprocess.check_output(args2,shell=True)
 	out2=out2.decode('utf-8').split('"')[3]
 	print(out2)
-	str=swap(bin(ip(bin(int(output(out2),0)))))
-	outlst2.append(int(str,0))
+	out2=swap(bin(ip(bin(int(output(out2),0)))))
 
-	print(outlst1,outlst2)
+	out_xor=padbin(bin(int(out1,0)^int(out2,0)))
+	print(out_xor)
+	last_in_xor='0b'+out_xor[2:34]
+	last_in_1='0b'+out1[2:34]
+	last_in_2='0b'+out2[2:34]
+	
+	last_out_xor='0b'+out_xor[34:]
+	
+	ex_in_xor=expand(last_in_xor)
+	ex_in_1=expand(last_in_1)
+	ex_in_2=expand(last_in_2)
+
+	print(last_out_xor)
+	s_out_xor=inv_s_permut(bin(int('0x04000000',0)^int('10000100110000011001001101000110',2)^int(last_out_xor,0)))
+	print((ex_in_1))
+	print((ex_in_2))
+	print((ex_in_xor))
+	print(padbin32(bin(s_out_xor)))
+
+
+
+
+
+	
