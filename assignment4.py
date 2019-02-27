@@ -1,5 +1,5 @@
 
-def padhexa(s):
+def padhexa(s): 
     return '0x' + s[2:].zfill(16)
 
 def padbin(s):
@@ -17,13 +17,13 @@ def hex2str(str):
 	lst=''.join(lst);
 	return lst
 
-def output(outp):
+def output(outp): #reducing the output to usable form
 	lst=['0x']
 	for i in range(len(outp)):
 		lst.append(hex(ord(outp[i])-ord('f'))[2])
 	return ''.join(lst)
 
-def swap(str):
+def swap(str): #swapping the halfs of the output of the last round
 	str=padbin(str)
 	str=str[2:]
 	str_l=str[0:32]
@@ -31,7 +31,7 @@ def swap(str):
 	return '0b'+str_r+str_l
 
 
-def inv_ip(s):
+def inv_ip(s): #computing the inverse of initial permutation of a string
 	s=padbin(s)
 	s=s[2:]
 	lst=[]
@@ -42,7 +42,7 @@ def inv_ip(s):
 	s='0b'+''.join(lst)
 	return int(s,0)
 
-def ip(s):
+def ip(s): #computing the initial permutation of a string
 	s=padbin(s)
 	s=s[2:]
 	lst=[]
@@ -53,7 +53,7 @@ def ip(s):
 	s='0b'+''.join(lst)
 	return int(s,0)
 
-def inv_s_permut(s):
+def inv_s_permut(s): # computing inverse of s-boxes permutation
 	s=padbin32(s)
 	s=s[2:]
 	lst=[]
@@ -64,7 +64,7 @@ def inv_s_permut(s):
 	s='0b'+''.join(lst)
 	return int(s,0)
 
-def expand(block):
+def expand(block): # expansion box
 	block=block[2:]
 	table=[32, 1, 2, 3, 4, 5,4, 5, 6, 7, 8, 9,8, 9, 10, 11, 12, 13,12, 13, 14, 15, 16, 17,16, 17, 18, 19, 20, 21,20, 21, 22, 23, 24, 25,24, 25, 26, 27, 28, 29,28, 29, 30, 31, 32, 1]
 	lst=[block[x-1] for x in table]
@@ -78,8 +78,8 @@ inlst2=[]
 outlst1=[]
 outlst2=[]
 
-char_xor= int('0x4008000004000000',0)
-in_xor=inv_ip(bin(char_xor))
+char_xor= int('0x4008000004000000',0) #input XOR for S boxes after initial permutation
+in_xor=inv_ip(bin(char_xor)) #XOR corresponding before initial permutation 
 
 
 for i in range(1):
@@ -98,27 +98,27 @@ for i in range(1):
 	out1=subprocess.check_output(args1,shell=True)
 	out1=out1.decode('utf-8').split('"')[3]
 	print(out1)
-	out1=swap(bin(ip(bin(int(output(out1),0)))))
+	out1=swap(bin(ip(bin(int(output(out1),0))))) #output of the final round before initial permutation and swapping
 
 	out2=subprocess.check_output(args2,shell=True)
 	out2=out2.decode('utf-8').split('"')[3]
 	print(out2)
-	out2=swap(bin(ip(bin(int(output(out2),0)))))
+	out2=swap(bin(ip(bin(int(output(out2),0))))) #output of the final round before initial permutation and swapping
 
-	out_xor=padbin(bin(int(out1,0)^int(out2,0)))
+	out_xor=padbin(bin(int(out1,0)^int(out2,0))) #output XOR 
 	print(out_xor)
 	last_in_xor='0b'+out_xor[2:34]
-	last_in_1='0b'+out1[2:34]
+	last_in_1='0b'+out1[2:34] #input for final round
 	last_in_2='0b'+out2[2:34]
 	
 	last_out_xor='0b'+out_xor[34:]
 	
-	ex_in_xor=expand(last_in_xor)
-	ex_in_1=expand(last_in_1)
-	ex_in_2=expand(last_in_2)
+	ex_in_xor=expand(last_in_xor) 
+	ex_in_1=expand(last_in_1) #input for S box
+	ex_in_2=expand(last_in_2)#input for S box
 
 	print(last_out_xor)
-	s_out_xor=inv_s_permut(bin(int('0x04000000',0)^int('10000100110000011001001101000110',2)^int(last_out_xor,0)))
+	s_out_xor=inv_s_permut(bin(int('0x04000000',0)^int('10000100110000011001001101000110',2)^int(last_out_xor,0))) #computing output XOR for S boxes
 	print((ex_in_1))
 	print((ex_in_2))
 	print((ex_in_xor))
