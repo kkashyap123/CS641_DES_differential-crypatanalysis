@@ -37,15 +37,16 @@ inlst2=[]
 outlst1=[]
 outlst2=[]
 
-char_xor= int('0x04000000405c0000',0)
+char_xor= int('0x4008000004000000',0)
 in_xor=inv_ip(bin(char_xor))
+
 
 for i in range(1):
 	in1=''.join(random.choice(string.ascii_lowercase) for i in range(8))
 	print(in1)
 	if in1 not in inlst1:
 		inlst1.append(in1)
-		in2=int(in1.encode('utf-8').hex(),16)^char_xor
+		in2=int(in1.encode('utf-8').hex(),16)^in_xor
 		in2=hex2str(hex(in2))
 		print(in2)
 		inlst2.append(in2)
@@ -62,4 +63,3 @@ for i in range(1):
 	out2=out2.decode('utf-8').split('"')[3]
 	print(out2)
 	outlst2.append(int(output(out2),0))
-
