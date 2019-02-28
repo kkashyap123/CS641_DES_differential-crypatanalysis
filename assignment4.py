@@ -149,6 +149,10 @@ char_xor= int('0x4008000004000000',0) #input XOR for S boxes after initial permu
 in_xor=inv_ip(bin(char_xor)) #XOR corresponding before initial permutation 
 
 
+xor_table=[] #a 4D matrix where firsr coordinate is corr S-BOX 2 nd coordinate is input XOR, 3rd coordinate is output XOR and resulting is a list of possible input
+	for i in range(8):
+		xor_table.append(creare_xor_table(i))
+
 for i in range(1):
 	in1=''.join(random.choice(string.ascii_lowercase) for i in range(8))
 	print(in1)
@@ -191,9 +195,7 @@ for i in range(1):
 	print((ex_in_xor))
 	print(padbin32(bin(s_out_xor)))
 
-	xor_table=[]
-	for i in range(8):
-		xor_table.append(creare_xor_table(i))
+	
 
 
 
