@@ -168,6 +168,7 @@ for i in range(8):
 	xor_table.append(creare_xor_table(i))
 
 key_set=[]
+Final=[]
 for i in range(5):
 	key_set.append({})
 
@@ -218,11 +219,18 @@ for i in range(1600): #trying for 1600 inputs
 			s_out_xor=padbin32(bin(s_out_xor))
 
 			ex_in=[]  #input to S2, S5,S6,S7,S8 boxes
+			EX_IN=[]                                                          #a whole input block
 			ex_in.append('0b'+ex_in_1[8:14])
+			EX_IN.append('0b'+ex_in_1[8:14])
 			ex_in.append('0b'+ex_in_1[26:32])
+			EX_IN.append(ex_in_1[26:32])
 			ex_in.append('0b'+ex_in_1[32:38])
+			EX_IN.append(ex_in_1[32:38])
 			ex_in.append('0b'+ex_in_1[38:44])
+			EX_IN.append(ex_in_1[38:44])
 			ex_in.append('0b'+ex_in_1[44:50])
+			EX_IN.append(ex_in_1[44:50])
+			EX_IN=''.join(EX_IN)
 
 			ex_in_x=[] #input XOR to S2, S5,S6,S7,S8 boxes
 			ex_in_x.append('0b'+ex_in_xor[8:14])
@@ -245,23 +253,40 @@ for i in range(1600): #trying for 1600 inputs
 			#print(ex_in_x)
 			#print(ex_in)
 
-			for k in range(5):
-				if k==0:
-					lst=xor_table[1][int(ex_in_x[k],0)][int(s_out[k],0)]
-					for val in lst:
-						key=val^int(ex_in[k],0) #computing key for each possible input
-						if key not in key_set[k]:
-							key_set[k].update({key:1})
-						else:
-							key_set[k][key]+=1
-				else:
-					lst=xor_table[k+3][int(ex_in_x[k],0)][int(s_out[k],0)]
-					for val in lst:
-						key=val^int(ex_in[k],0)
-						if key not in key_set[k]:
-							key_set[k].update({key:1})
-						else:
-							key_set[k][key]+=1
+##			for k in range(5):
+##				if k==0:
+##					lst=xor_table[1][int(ex_in_x[k],0)][int(s_out[k],0)]
+##					for val in lst:
+##						key=val^int(ex_in[k],0) #computing key for each possible input
+##						if key not in key_set[k]:
+##							key_set[k].update({key:1})
+##						else:
+##							key_set[k][key]+=1
+##				else:
+##					lst=xor_table[k+3][int(ex_in_x[k],0)][int(s_out[k],0)]
+##					for val in lst:
+##						key=val^int(ex_in[k],0)
+##						if key not in key_set[k]:
+##							key_set[k].update({key:1})
+##						else:
+##							key_set[k][key]+=1
+			for int1 in xor_table[1][int(ex_in_x[0],0)][int(s_out[0],0)]:                         #combine the different s-box inputs
+                            for int2 in xor_table[4][int(ex_in_x[1],0)][int(s_out[1],0)]:
+                                for int3 in xor_table[5][int(ex_in_x[2],0)][int(s_out[2],0)]:
+                                    for int4 in xor_table[6][int(ex_in_x[3],0)][int(s_out[3],0)]:
+                                        for int5 in xor_table[7][int(ex_in_x[4],0)][int(s_out[4],0)]:
+                                             val=[]
+                                             val.append(bin(int1)[2:].zfill(6))
+                                             val.append(bin(int2)[2:].zfill(6))
+                                             val.append(bin(int3)[2:].zfill(6))
+                                             val.append(bin(int4)[2:].zfill(6))
+                                             val.append(bin(int5)[2:].zfill(6))
+                                             val=''.join(val)
+                                             val='0b'+val
+                                             val=int(val,0)
+                                             Final.append(val^int(EX_IN,0))
+##                        for itr in values:
+##                                Final=Final.append(itr^int(EX_IN,0)                                                  
 			#print(key_set)
 			
 		else: #if output is not a string
@@ -275,9 +300,12 @@ for i in range(1600): #trying for 1600 inputs
 
 print(1600-count)
 
-for dic in key_set:  #maximum occuring key for each of S2, S5,S6,S7,S8
-	print(max(zip(dic.values(), dic.keys())))
-
+##for dic in key_set:  #maximum occuring key for each of S2, S5,S6,S7,S8
+##	print(max(zip(dic.values(), dic.keys())))
+from collections import Counter
+print(Final[0:20])
+most_common,num_most_common = Counter(Final).most_common(1)[0]
+print(most_common,num_most_common)
 """
 count=0
 for dic in key_set:
